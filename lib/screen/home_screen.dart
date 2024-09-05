@@ -1,4 +1,5 @@
 
+import 'package:code/screen/scan/cam/new.dart';
 import 'package:code/screen/scan/plate_no_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:code/api/api_violation.dart';
@@ -177,7 +178,7 @@ class _HomeState extends State<Home> {
   Widget _buildNFCButton() {
     return GestureDetector(
       onTap: () {
-        // Xử lý sự kiện khi button được nhấn
+        Navigator.push(context, MaterialPageRoute(builder: (context) => CameraPage()));
       },
       child: Container(
         width: 300,

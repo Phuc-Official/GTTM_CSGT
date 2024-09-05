@@ -16,6 +16,7 @@ class _PlateNoScanState extends State<PlateNoScan> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
   bool scannedSuccessfully = false;
+  String scannedCode = ''; // Biến lưu trữ mã quét được
 
   @override
   void reassemble() {
@@ -38,14 +39,16 @@ class _PlateNoScanState extends State<PlateNoScan> {
         scannedSuccessfully = true;
         controller.pauseCamera();
 
-        if (_isValidLicensePlate(scanData.code!)) {
-          // In dữ liệu ra log
-          print('Biển số xe quét được: ${scanData.code!}');
+        // Cập nhật mã quét được
+        scannedCode = scanData.code!;
+        print('Biển số xe quét được: $scannedCode');
 
+        // Kiểm tra tính hợp lệ và chuyển đến InfoScreen
+        if (_isValidLicensePlate(scannedCode)) {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => InfoScreen(data: scanData.code!), // Chuyển dữ liệu quét được đến InfoScreen
+              builder: (context) => InfoScreen(data: scannedCode), // Chuyển dữ liệu quét đến InfoScreen
             ),
           ).then((_) {
             scannedSuccessfully = false; // Đặt lại trạng thái quét
@@ -63,8 +66,8 @@ class _PlateNoScanState extends State<PlateNoScan> {
   }
 
   bool _isValidLicensePlate(String code) {
-    // Kiểm tra định dạng biển số xe (bao gồm chữ, số, dấu '.' và '-')
-    final RegExp regex = RegExp(r'^[A-Z0-9.-]{1,7}$');
+    // Kiểm tra định dạng biển số xe (bao gồm chữ cái, số, dấu '.' và '-')
+    final RegExp regex = RegExp(r'^[A-Z0-9.-]+$'); // Cập nhật regex cho phép chữ cái và số
     return regex.hasMatch(code);
   }
 
@@ -106,6 +109,19 @@ class _PlateNoScanState extends State<PlateNoScan> {
                   ],
                 ),
               ],
+            ),
+            Positioned(
+              top: 60,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  scannedCode.isNotEmpty ? 'Biển số xe: $scannedCode' : 'Chưa quét biển số xe',
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
             Positioned(
               top: 100,

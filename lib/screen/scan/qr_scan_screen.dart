@@ -17,13 +17,12 @@ class _QRScanState extends State<QRScan> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
   bool scannedSuccessfully = false;
+  bool isCameraActive = false; // Biến theo dõi trạng thái camera
 
-  Widget _cornerSquare() {
-    return Container(
-      width: 40,
-      height: 40,
-      color: Colors.white,
-    );
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
   }
 
   @override
@@ -34,27 +33,26 @@ class _QRScanState extends State<QRScan> {
     }
   }
 
-  @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
-  }
-
   void onQRViewCreated(QRViewController controller) {
     this.controller = controller;
-    controller.scannedDataStream.listen((scanData) {
-      if (scanData.code != null && !scannedSuccessfully) {
-        scannedSuccessfully = true;
-        controller.pauseCamera();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => InfoScreen(data: scanData.code!),
-          ),
-        );
-      }
-    });
 
+    if (!isCameraActive) {
+      isCameraActive = true; // Đánh dấu camera đang hoạt động
+      controller.scannedDataStream.listen((scanData) {
+        if (scanData.code != null && !scannedSuccessfully) {
+          scannedSuccessfully = true;
+          controller.pauseCamera();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => InfoScreen(data: scanData.code!),
+            ),
+          );
+        }
+      }, onError: (error) {
+        print('Lỗi quét mã QR: $error'); // Xử lý lỗi quét
+      });
+    }
   }
 
   @override
@@ -74,14 +72,11 @@ class _QRScanState extends State<QRScan> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 80, top: 180),
-                      // Padding cho hình ảnh đầu tiên
                       child: SvgPicture.asset("assets/logo/expand.svg"),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 160, top: 180),
-                      // Padding cho hình ảnh thứ hai
-                      child: SvgPicture.asset(
-                          "assets/logo/expand-1.svg"), // Đường dẫn tới hình ảnh SVG thứ hai
+                      child: SvgPicture.asset("assets/logo/expand-1.svg"),
                     ),
                   ],
                 ),
@@ -89,14 +84,11 @@ class _QRScanState extends State<QRScan> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(left: 80, top: 180),
-                      // Padding cho hình ảnh đầu tiên
                       child: SvgPicture.asset("assets/logo/expand-2.svg"),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(left: 160, top: 180),
-                      // Padding cho hình ảnh thứ hai
-                      child: SvgPicture.asset(
-                          "assets/logo/expand-3.svg"), // Đường dẫn tới hình ảnh SVG thứ hai
+                      child: SvgPicture.asset("assets/logo/expand-3.svg"),
                     ),
                   ],
                 ),
@@ -116,13 +108,13 @@ class _QRScanState extends State<QRScan> {
               ),
             ),
             Column(
-              mainAxisAlignment: MainAxisAlignment.end, // Phân bổ không gian đều
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FlashAndGalleryButtons(), // Đặt FlashAndGalleryButtons ở trên cùng
+                FlashAndGalleryButtons(),
                 Padding(
-                  padding: const EdgeInsets.only(top: 40,bottom: 40.0), // Điều chỉnh khoảng cách từ dưới
+                  padding: const EdgeInsets.only(top: 40, bottom: 40.0),
                   child: Align(
-                    alignment: Alignment.center, // Điều chỉnh vị trí ngang
+                    alignment: Alignment.center,
                     child: GestureDetector(
                       onTap: () {
                         // Xử lý sự kiện khi button được nhấn
