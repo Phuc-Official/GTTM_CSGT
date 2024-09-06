@@ -1,6 +1,7 @@
 import 'package:code/screen/lookup/sanction_detail.dart';
 import 'package:flutter/material.dart';
-import '../../button/horizontal_scroll.dart';
+
+import '../../elements/horizontal_scroll.dart';
 
 class TrafficSanction extends StatefulWidget {
   final String plateNo; // Biển số xe

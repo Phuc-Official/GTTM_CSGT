@@ -1,10 +1,11 @@
+import 'package:code/elements/frame_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
+import '../../elements/lightning_gallery.dart';
 import '../../styles/app_colors.dart';
 import 'info_screen.dart';
-import '../../button/lightning_gallery.dart';
 
 class QRScan extends StatefulWidget {
   const QRScan({Key? key}) : super(key: key);
@@ -14,85 +15,91 @@ class QRScan extends StatefulWidget {
 }
 
 class _QRScanState extends State<QRScan> {
+  // CameraController? _controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  QRViewController? controller;
+  QRViewController? qrController;
   bool scannedSuccessfully = false;
-  bool isCameraActive = false; // Biến theo dõi trạng thái camera
+
+  ///
+  // late final MobileScannerController mobileScanner;
+
+  @override
+  void initState() {
+    super.initState();
+
+    //_initializeCamera();
+    // //
+    // mobileScanner = MobileScannerController(
+    //     torchEnabled: false,
+    //   // cameraResolution:
+// );
+  }
+
+  // Future<void> _initializeCamera() async {
+  //   final cameras = await availableCameras();
+  //   if (cameras.isNotEmpty) {
+  //     _controller = CameraController(
+  //         cameras[0], ResolutionPreset.high);
+  //     await _controller!.initialize();
+  //     setState(() {});
+  //   } else {
+  //     print('Không tìm thấy camera.');
+  //   }
+  // }
 
   @override
   void dispose() {
-    controller?.dispose();
+    qrController?.dispose();
+    //_controller?.dispose();
     super.dispose();
   }
 
-  @override
-  void reassemble() {
-    super.reassemble();
-    if (controller != null) {
-      controller!.pauseCamera();
-    }
-  }
-
   void onQRViewCreated(QRViewController controller) {
-    this.controller = controller;
+    this.qrController = controller;
 
-    if (!isCameraActive) {
-      isCameraActive = true; // Đánh dấu camera đang hoạt động
-      controller.scannedDataStream.listen((scanData) {
-        if (scanData.code != null && !scannedSuccessfully) {
-          scannedSuccessfully = true;
-          controller.pauseCamera();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => InfoScreen(data: scanData.code!),
-            ),
-          );
-        }
-      }, onError: (error) {
-        print('Lỗi quét mã QR: $error'); // Xử lý lỗi quét
-      });
-    }
+    qrController?.scannedDataStream.listen((scanData) {
+      if (scanData.code != null && !scannedSuccessfully) {
+        scannedSuccessfully = true;
+        qrController?.pauseCamera();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InfoScreen(data: scanData.code!),
+          ),
+        );
+      }
+    }, onError: (error) {
+      print('Lỗi quét mã QR: $error');
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Quét mã QR')),
       body: SafeArea(
         child: Stack(
           children: [
-            QRView(
-              key: qrKey,
-              onQRViewCreated: onQRViewCreated,
+            // Đảm bảo QRView chiếm toàn bộ không gian
+            Positioned.fill(
+              child: QRView(
+                key: qrKey,
+                onQRViewCreated: onQRViewCreated,
+              ),
             ),
-            Column(
-              children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 80, top: 180),
-                      child: SvgPicture.asset("assets/logo/expand.svg"),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 160, top: 180),
-                      child: SvgPicture.asset("assets/logo/expand-1.svg"),
-                    ),
-                  ],
+            FrameCamera(), // FrameCamera vẫn nằm trên QRView
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: AppBar(
+                title: Text(
+                  'Quét mã QR',
+                  style: TextStyle(color: Colors.white),
                 ),
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 80, top: 180),
-                      child: SvgPicture.asset("assets/logo/expand-2.svg"),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 160, top: 180),
-                      child: SvgPicture.asset("assets/logo/expand-3.svg"),
-                    ),
-                  ],
-                ),
-              ],
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                iconTheme: IconThemeData(color: Colors.white),
+              ),
             ),
             Positioned(
               top: 100,
@@ -121,7 +128,8 @@ class _QRScanState extends State<QRScan> {
                       },
                       child: Container(
                         width: 300,
-                        padding: EdgeInsets.symmetric(horizontal: 0, vertical: 15),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 0, vertical: 15),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [AppColors.blueTop, AppColors.blueBot],

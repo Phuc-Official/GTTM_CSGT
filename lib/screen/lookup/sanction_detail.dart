@@ -2,12 +2,8 @@ import 'package:code/styles/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 import '../../api/api_violation.dart';
-import '../../button/horizontal_scroll.dart';
-import '../../data/vehicle.dart';
 
 class SanctionDetail extends StatefulWidget {
   final String plateNo; // Biển số xe
@@ -43,7 +39,8 @@ class _SanctionDetailState extends State<SanctionDetail> {
   }
 
   Future<void> _fetchViolations() async {
-    List<Map<String, dynamic>> fetchedViolations = await fetchViolations(currentPlateNo);
+    List<Map<String, dynamic>> fetchedViolations =
+        await fetchViolations(currentPlateNo);
     setState(() {
       vehicles = fetchedViolations; // Cập nhật danh sách vi phạm
     });
@@ -53,7 +50,8 @@ class _SanctionDetailState extends State<SanctionDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thông tin phương tiện vi phạm', style: TextStyle(fontSize: 15)),
+        title: Text('Thông tin phương tiện vi phạm',
+            style: TextStyle(fontSize: 15)),
       ),
       body: Container(
         color: Colors.white, // Màu nền trắng cho toàn bộ body
@@ -62,7 +60,10 @@ class _SanctionDetailState extends State<SanctionDetail> {
             // SingleChildScrollView bao bọc nội dung
             SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.only(top: 55, left: 20, right: 20), // Tăng padding trên để tránh che
+                padding: const EdgeInsets.only(
+                    top: 55,
+                    left: 20,
+                    right: 20), // Tăng padding trên để tránh che
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -73,7 +74,10 @@ class _SanctionDetailState extends State<SanctionDetail> {
                       Center(child: Text('Không có thông tin vi phạm.'))
                     else
                       Column(
-                        children: vehicles.map((violation) => _buildViolationContainer(violation)).toList(),
+                        children: vehicles
+                            .map((violation) =>
+                                _buildViolationContainer(violation))
+                            .toList(),
                       ),
                   ],
                 ),
@@ -83,7 +87,7 @@ class _SanctionDetailState extends State<SanctionDetail> {
             // Widget biển số xe cố định
             Container(
               color: Colors.transparent,
-              padding: EdgeInsets.only(top:00, left: 20, right: 20),
+              padding: EdgeInsets.only(top: 00, left: 20, right: 20),
               child: _buildPlateNumberWidget(),
             ),
           ],
@@ -113,11 +117,15 @@ class _SanctionDetailState extends State<SanctionDetail> {
         children: [
           Text(
             'Biển số xe:',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.blueBot),
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: AppColors.blueBot),
           ),
           Text(
             currentPlateNo,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
+            style: TextStyle(
+                fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
           ),
         ],
       ),
@@ -174,15 +182,20 @@ class _SanctionDetailState extends State<SanctionDetail> {
           SizedBox(height: 20),
           _buildInfoRow('Loại vi phạm', _getViolationType(violation)),
           SizedBox(height: 20),
-          _buildInfoRow('Lỗi vi phạm', violation['ViolationPatternId']['Name'] ?? '-- '),
+          _buildInfoRow(
+              'Lỗi vi phạm', violation['ViolationPatternId']['Name'] ?? '-- '),
           SizedBox(height: 20),
-          _buildInfoRow('Thời gian vi phạm', _formatDateTime(violation['CreatedAt'])),
+          _buildInfoRow(
+              'Thời gian vi phạm', _formatDateTime(violation['CreatedAt'])),
           SizedBox(height: 20),
-          _buildInfoRow('Địa điểm vi phạm', violation['LogId']['LocationViolation'] ?? '-- '),
+          _buildInfoRow('Địa điểm vi phạm',
+              violation['LogId']['LocationViolation'] ?? '-- '),
           SizedBox(height: 20),
-          _buildInfoRow('Toạ độ vi phạm', violation['LogId']['Coordinate'] ?? '-- '),
+          _buildInfoRow(
+              'Toạ độ vi phạm', violation['LogId']['Coordinate'] ?? '-- '),
           SizedBox(height: 20),
-          _buildInfoRow('Đơn vị phát hiện\nvi phạm', violation['LogId']['SettlementAgency'] ?? '-- '),
+          _buildInfoRow('Đơn vị phát hiện\nvi phạm',
+              violation['LogId']['SettlementAgency'] ?? '-- '),
           SizedBox(height: 20),
           _buildLicenseStatusRow(),
           Align(
@@ -240,7 +253,10 @@ class _SanctionDetailState extends State<SanctionDetail> {
             child: Text(
               value,
               textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.bold), // Cho phép xuống dòng
+              style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold), // Cho phép xuống dòng
             ),
           ),
         ),
