@@ -1,10 +1,10 @@
-import 'package:code/elements/frame_camera.dart';
+import 'package:SmartTraffic/elements/frame_camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import '../../elements/lightning_gallery.dart';
-import '../../styles/app_colors.dart';
+import '../../../elements/lightning_gallery.dart';
+import '../../../styles/app_colors.dart';
 import 'info_screen.dart';
 
 class QRScan extends StatefulWidget {
@@ -57,19 +57,32 @@ class _QRScanState extends State<QRScan> {
   void onQRViewCreated(QRViewController controller) {
     this.qrController = controller;
 
-    qrController?.scannedDataStream.listen((scanData) {
-      if (scanData.code != null && !scannedSuccessfully) {
-        scannedSuccessfully = true;
-        qrController?.pauseCamera();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => InfoScreen(data: scanData.code!),
-          ),
-        );
-      }
-    }, onError: (error) {
-      print('Lỗi quét mã QR: $error');
+    qrController?.scannedDataStream.listen(
+      (scanData) {
+        if (scanData.code != null && !scannedSuccessfully) {
+          scannedSuccessfully = true;
+          qrController?.pauseCamera();
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => InfoScreen(
+                data: scanData.code!,
+                imagePath: '',
+              ),
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  void toggleTorch() {
+    bool isTorchOn = false;
+    setState(() {
+      isTorchOn = !isTorchOn;
+      // Logic bật/tắt đèn pin
+      print('Đèn pin ${isTorchOn ? 'bật' : 'tắt'}');
     });
   }
 
@@ -114,10 +127,34 @@ class _QRScanState extends State<QRScan> {
                 ),
               ),
             ),
+
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FlashAndGalleryButtons(),
+                Stack(
+                  children: [
+                    FlashAndGalleryButtons(),
+                    Container(
+                      width: 100,
+                      height: 50,
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: Colors.transparent,
+                          backgroundColor: Colors.transparent, // Màu chữ
+                          shadowColor: Colors.transparent, // Tắt bóng
+                          side:
+                              BorderSide(color: Colors.transparent), // Tắt viền
+                        ),
+                        onPressed: () async {
+                          await qrController?.toggleFlash();
+                        },
+                        child: null,
+                      ),
+                    ),
+                  ],
+                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 40, bottom: 40.0),
                   child: Align(

@@ -1,10 +1,12 @@
-import 'package:code/api/api_violation.dart';
-import 'package:code/screen/scan/plate_no_scan/pn_scanner_screen.dart';
-import 'package:code/screen/scan/qr_scan_screen.dart';
+import 'package:SmartTraffic/api/api_violation.dart';
+import 'package:SmartTraffic/screen/scan/plate_no_scan/pn_scanner_screen.dart';
+import 'package:SmartTraffic/screen/scan/qr_scan/qr_scan_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../styles/app_colors.dart';
+import '../../test/cammm.dart';
+import '../traffic_laws/laws_screen.dart';
 import 'lookup_screen.dart';
 
 class Home extends StatefulWidget {
@@ -84,18 +86,28 @@ class _HomeState extends State<Home> {
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
               Padding(
+                padding: EdgeInsets.symmetric(horizontal: 55),
+                child: const Text(
+                  "Vui lòng nhập thông tin cần tra cứu hoặc quét mã QR, "
+                  "quẹt thẻ chip CCCD/CMND để tiếp tục quá trình.",
+                  style: TextStyle(fontSize: 15, color: AppColors.bgOryza),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.all(30),
                 child: TextField(
                   controller: _textController,
                   cursorColor: Colors.black,
                   decoration: const InputDecoration(
                     hintText: "VD: 61A99XXX hoặc 61A-99XXX",
+                    hintStyle: TextStyle(color: Colors.black12),
                     labelText: 'Thông tin tra cứu',
                     floatingLabelBehavior: FloatingLabelBehavior.always,
                     labelStyle:
-                        TextStyle(color: Colors.black), // Màu label mặc định
+                        TextStyle(color: Colors.grey), // Màu label mặc định
                     floatingLabelStyle:
-                        TextStyle(color: Colors.black), // Màu label khi focus
+                        TextStyle(color: Colors.grey), // Màu label khi focus
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.cyan, width: 1.0),
                       borderRadius: BorderRadius.all(Radius.circular(12.0)),
@@ -133,7 +145,18 @@ class _HomeState extends State<Home> {
               SizedBox(height: 15),
               _buildNFCButton(),
               SizedBox(height: 15),
-              _buildPlateNoButton()
+              _buildPlateNoButton(),
+              SizedBox(height: 15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildTrafficLawsButton(),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  _buildNewsButton(),
+                ],
+              )
             ],
           ),
         ),
@@ -195,8 +218,8 @@ class _HomeState extends State<Home> {
   Widget _buildNFCButton() {
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //     context, MaterialPageRoute(builder: (context) => QrScannerPage()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => QrScannerPage()));
       },
       child: Container(
         width: 300,
@@ -246,6 +269,75 @@ class _HomeState extends State<Home> {
                 width: 20, height: 20, color: AppColors.white),
             SizedBox(width: 8),
             Text('Quét biển số xe',
+                style: TextStyle(
+                    color: AppColors.white, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTrafficLawsButton() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => LawsScreen()));
+      },
+      child: Container(
+        width: 145,
+        height: 70,
+        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 0),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.purpleAccent, Colors.deepPurple],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // SvgPicture.asset('assets/logo/signal.svg',
+            //     width: 20, height: 20, color: AppColors.white),
+            //SizedBox(width: 8),
+            Text(
+              'Luật \n giao thông',
+              style: TextStyle(
+                  color: AppColors.white, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNewsButton() {
+    return GestureDetector(
+      // onTap: () {
+      //   Navigator.push(
+      //       context, MaterialPageRoute(builder: (context) => CameraPage()));
+      // },
+      child: Container(
+        width: 145,
+        height: 70,
+        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 0),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.greenAccent, Colors.lightGreen],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // SvgPicture.asset('assets/logo/signal.svg',
+            //     width: 20, height: 20, color: AppColors.white),
+            //SizedBox(width: 8),
+            Text('Tin tức',
                 style: TextStyle(
                     color: AppColors.white, fontWeight: FontWeight.bold)),
           ],

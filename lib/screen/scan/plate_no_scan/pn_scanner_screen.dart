@@ -1,7 +1,7 @@
+import 'package:SmartTraffic/elements/frame_camera.dart';
+import 'package:SmartTraffic/elements/lightning_gallery.dart';
+import 'package:SmartTraffic/screen/scan/plate_no_scan/plate_info_screen.dart';
 import 'package:camera/camera.dart';
-import 'package:code/elements/frame_camera.dart';
-import 'package:code/elements/lightning_gallery.dart';
-import 'package:code/screen/scan/plate_no_scan/plate_info_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -31,7 +31,6 @@ class _CameraPageState extends State<CameraPage> {
     try {
       cameras = await availableCameras();
       if (cameras.isNotEmpty) {
-        // Sử dụng ResolutionPreset.max để tăng chất lượng camera
         _controller = CameraController(cameras.first, ResolutionPreset.high);
         _initializeControllerFuture = _controller!.initialize();
         await _initializeControllerFuture;
@@ -165,7 +164,7 @@ class _CameraPageState extends State<CameraPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FlashAndGalleryButtons(cameraController: _controller),
+                FlashAndGalleryButtons(),
                 SizedBox(height: 20),
               ],
             ),

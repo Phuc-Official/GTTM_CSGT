@@ -10,8 +10,10 @@ class InfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Gộp các dòng thành một dòng và loại bỏ dấu chấm
-    String singleLineText =
-        extractedText.replaceAll('\n', '-').replaceAll('.', '');
+    String singleLineText = extractedText
+        .replaceAll('-', '')
+        .replaceAll('\n', '-')
+        .replaceAll('.', '');
 
     return Scaffold(
       appBar: AppBar(title: Text('Thông Tin')),

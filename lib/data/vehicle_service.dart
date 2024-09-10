@@ -1,14 +1,16 @@
 import 'dart:convert';
 
-import 'package:code/data/vehicle.dart';
+import 'package:SmartTraffic/data/vehicle.dart';
 import 'package:http/http.dart' as http;
+
 class VehicleService {
   final String apiUrl;
 
   VehicleService(this.apiUrl);
 
   Future<List<Vehicle>> fetchVehicles(String plateNo) async {
-    final response = await http.get(Uri.parse('http://192.168.105.250:4113/traffic-violation/find-violation-by-plate-no/$plateNo'));
+    final response = await http.get(Uri.parse(
+        'http://192.168.105.250:4113/traffic-violation/find-violation-by-plate-no/$plateNo'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
@@ -41,7 +43,8 @@ class VehicleService {
   // Giả sử bạn đã có lớp VehicleService
 
   Future<List<String>> fetchPlateNumbers() async {
-    final response = await http.get(Uri.parse('http://192.168.105.250:4113/traffic-violation/find-violation-by-plate-no/'));
+    final response = await http.get(Uri.parse(
+        'http://192.168.105.250:4113/traffic-violation/find-violation-by-plate-no/'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -50,7 +53,8 @@ class VehicleService {
       if (data is Map && data.containsKey('LogId')) {
         return List<String>.from(data['LogId'].map((item) => item['PlateNo']));
       } else {
-        throw Exception('Expected an object with plateNumbers but got ${data.runtimeType}');
+        throw Exception(
+            'Expected an object with plateNumbers but got ${data.runtimeType}');
       }
     } else {
       throw Exception('Failed to load plate numbers');

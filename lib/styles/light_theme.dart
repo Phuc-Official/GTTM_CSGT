@@ -1,5 +1,5 @@
+import 'package:SmartTraffic/styles/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:code/styles/app_colors.dart';
 
 lightTheme(BuildContext context) {
   const MaterialColor black = MaterialColor(
