@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 
 import '../../api/api_violation.dart';
 
+/// Xem chi tiết phạt nguội
+
 class SanctionDetail extends StatefulWidget {
   final String plateNo; // Biển số xe
 

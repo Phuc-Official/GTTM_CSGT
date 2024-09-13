@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../elements/group_btn.dart';
 
+/// Màn hình tra cứu
+
 class LookupScreen extends StatelessWidget {
   final String plateNo; // Biển số xe
 

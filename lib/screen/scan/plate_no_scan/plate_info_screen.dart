@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../main_screen/lookup_screen.dart'; // Đảm bảo import LookupScreen
 
+/// Hiển thị biển số quét được
+
 class InfoPage extends StatelessWidget {
   final String extractedText;
 

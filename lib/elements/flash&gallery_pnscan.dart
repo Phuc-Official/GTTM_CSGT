@@ -1,88 +1,84 @@
-import 'package:SmartTraffic/screen/scan/qr_scan/info_screen.dart';
 import 'package:SmartTraffic/styles/app_colors.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 
-class FlashAndGalleryButtons extends StatefulWidget {
+import '../screen/scan/plate_no_scan/plate_info_screen.dart';
+
+class FGButtonsPlateNoScan extends StatefulWidget {
   final CameraController? cameraController;
 
-  FlashAndGalleryButtons({this.cameraController});
+  FGButtonsPlateNoScan({this.cameraController});
 
   @override
-  _FlashAndGalleryButtonsState createState() => _FlashAndGalleryButtonsState();
+  _FGButtonsPlateNoScanState createState() => _FGButtonsPlateNoScanState();
 }
 
-class _FlashAndGalleryButtonsState extends State<FlashAndGalleryButtons> {
+class _FGButtonsPlateNoScanState extends State<FGButtonsPlateNoScan> {
   final ImagePicker _picker = ImagePicker();
   bool isTorchOn = false;
-  CameraController? _cameraController;
-  List<CameraDescription>? cameras;
-  bool _isPickingImage = false;
 
-  ///
-// late final MobileScannerController mobileScanner;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Future<void> _initializeCamera() async {
-    cameras = await availableCameras();
-    if (cameras!.isNotEmpty) {
-      _cameraController = CameraController(
-        cameras![0], // Sử dụng camera trước hoặc sau
-        ResolutionPreset.max,
-      );
-
-      await _cameraController?.initialize();
-      setState(() {});
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      print('Đã chọn ảnh: ${pickedFile.path}');
+      await _detectTextFromImage(
+          pickedFile.path); // Gọi phương thức để đọc văn bản
     }
   }
 
-  Future<void> _pickImage() async {
-    if (_isPickingImage) return; // Nếu đang chọn hình ảnh thì không làm gì cả
-    _isPickingImage = true; // Đánh dấu rằng đang chọn hình ảnh
-
+  Future<void> _detectTextFromImage(String imagePath) async {
     try {
-      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-      if (pickedFile != null) {
-        // Điều hướng đến màn hình quét QR với hình ảnh đã chọn
-        Navigator.pop(context);
+      final inputImage = InputImage.fromFilePath(imagePath);
+      final textDetector = GoogleMlKit.vision.textRecognizer();
+      final RecognizedText recognizedText =
+          await textDetector.processImage(inputImage);
+
+      // Lấy văn bản đã nhận diện
+      List<String> textsInFrame = _getTexts(recognizedText);
+      if (textsInFrame.isNotEmpty) {
+        String extractedText = textsInFrame.join('\n');
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => InfoScreen(
-              imagePath: pickedFile.path,
-              data: '',
-            ),
+            builder: (context) => InfoPage(extractedText: extractedText),
           ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Không phát hiện văn bản trong ảnh.')),
         );
       }
     } catch (e) {
-      print('Lỗi khi chọn hình ảnh: $e'); // In ra lỗi nếu có
-    } finally {
-      _isPickingImage = false; // Đánh dấu kết thúc chọn hình ảnh
+      print('Lỗi khi quét văn bản: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Lỗi khi quét văn bản: $e')),
+      );
     }
   }
 
-// void _toggleFlash() {
-// setState(() {
-// isTorchOn = !isTorchOn;
-// if (_cameraController != null && _cameraController!.value.isInitialized) {
-// _cameraController!.setFlashMode(isTorchOn ? FlashMode.torch : FlashMode.off);
-// }
-// });
-// //print('Flash ${isTorchOn ? 'bật' : 'tắt'}');
-// }
+  List<String> _getTexts(RecognizedText recognizedText) {
+    List<String> textsInFrame = [];
+    for (TextBlock block in recognizedText.blocks) {
+      for (TextLine line in block.lines) {
+        textsInFrame.add(line.text);
+      }
+    }
+    return textsInFrame;
+  }
 
   Future<void> _toggleTorch() async {
-    if (isTorchOn) {
-      await _disableTorch();
+    if (widget.cameraController != null &&
+        widget.cameraController!.value.isInitialized) {
+      if (isTorchOn) {
+        await _disableTorch();
+      } else {
+        await _enableTorch();
+      }
     } else {
-      await _enableTorch();
+      print('Camera chưa được khởi tạo.');
     }
   }
 
@@ -109,11 +105,6 @@ class _FlashAndGalleryButtonsState extends State<FlashAndGalleryButtons> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
       width: 300,
@@ -129,12 +120,6 @@ class _FlashAndGalleryButtonsState extends State<FlashAndGalleryButtons> {
             children: [
               GestureDetector(
                 onTap: _toggleTorch,
-// onTap: () {
-// setState(() {
-// isTorchOn = !isTorchOn;
-// mobileScanner.toggleTorch();
-// });
-// },
                 child: Container(
                   width: 140,
                   padding: EdgeInsets.symmetric(vertical: 10),

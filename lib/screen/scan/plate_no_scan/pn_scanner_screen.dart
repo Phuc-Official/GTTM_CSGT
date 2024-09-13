@@ -1,10 +1,12 @@
+import 'package:SmartTraffic/elements/flash&gallery_pnscan.dart';
 import 'package:SmartTraffic/elements/frame_camera.dart';
-import 'package:SmartTraffic/elements/lightning_gallery.dart';
 import 'package:SmartTraffic/screen/scan/plate_no_scan/plate_info_screen.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+///Màn hình quét biển số
 
 class CameraPage extends StatefulWidget {
   @override
@@ -25,6 +27,20 @@ class _CameraPageState extends State<CameraPage> {
   void initState() {
     super.initState();
     _requestCameraPermission();
+  }
+
+  Future<void> _requestCameraPermission() async {
+    var status = await Permission.camera.status;
+    if (!status.isGranted) {
+      status = await Permission.camera.request();
+    }
+    if (status.isGranted) {
+      await _initializeCamera();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Cần quyền truy cập camera.')),
+      );
+    }
   }
 
   Future<void> _initializeCamera() async {
@@ -98,20 +114,6 @@ class _CameraPageState extends State<CameraPage> {
     return textsInFrame;
   }
 
-  Future<void> _requestCameraPermission() async {
-    var status = await Permission.camera.status;
-    if (!status.isGranted) {
-      status = await Permission.camera.request();
-    }
-    if (status.isGranted) {
-      await _initializeCamera();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Cần quyền truy cập camera.')),
-      );
-    }
-  }
-
   @override
   void dispose() {
     _controller?.dispose();
@@ -164,7 +166,8 @@ class _CameraPageState extends State<CameraPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                FlashAndGalleryButtons(),
+                FGButtonsPlateNoScan(
+                    cameraController: _controller), // Truyền CameraController
                 SizedBox(height: 20),
               ],
             ),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import '../../../elements/lightning_gallery.dart';
+import '../../../elements/flash&gallery_qrscan.dart';
 import '../../../styles/app_colors.dart';
 import 'info_screen.dart';
 
@@ -15,42 +15,14 @@ class QRScan extends StatefulWidget {
 }
 
 class _QRScanState extends State<QRScan> {
-  // CameraController? _controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? qrController;
   bool scannedSuccessfully = false;
-
-  ///
-  // late final MobileScannerController mobileScanner;
-
-  @override
-  void initState() {
-    super.initState();
-
-    //_initializeCamera();
-    // //
-    // mobileScanner = MobileScannerController(
-    //     torchEnabled: false,
-    //   // cameraResolution:
-// );
-  }
-
-  // Future<void> _initializeCamera() async {
-  //   final cameras = await availableCameras();
-  //   if (cameras.isNotEmpty) {
-  //     _controller = CameraController(
-  //         cameras[0], ResolutionPreset.high);
-  //     await _controller!.initialize();
-  //     setState(() {});
-  //   } else {
-  //     print('Không tìm thấy camera.');
-  //   }
-  // }
+  bool isTorchOn = false;
 
   @override
   void dispose() {
     qrController?.dispose();
-    //_controller?.dispose();
     super.dispose();
   }
 
@@ -77,13 +49,14 @@ class _QRScanState extends State<QRScan> {
     );
   }
 
-  void toggleTorch() {
-    bool isTorchOn = false;
-    setState(() {
-      isTorchOn = !isTorchOn;
-      // Logic bật/tắt đèn pin
+  void toggleFlash() {
+    if (qrController != null) {
+      setState(() {
+        isTorchOn = !isTorchOn;
+      });
+      qrController?.toggleFlash();
       print('Đèn pin ${isTorchOn ? 'bật' : 'tắt'}');
-    });
+    }
   }
 
   @override
@@ -92,14 +65,13 @@ class _QRScanState extends State<QRScan> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Đảm bảo QRView chiếm toàn bộ không gian
             Positioned.fill(
               child: QRView(
                 key: qrKey,
                 onQRViewCreated: onQRViewCreated,
               ),
             ),
-            FrameCamera(), // FrameCamera vẫn nằm trên QRView
+            FrameCamera(),
             Positioned(
               top: 0,
               left: 0,
@@ -127,34 +99,11 @@ class _QRScanState extends State<QRScan> {
                 ),
               ),
             ),
-
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Stack(
-                  children: [
-                    FlashAndGalleryButtons(),
-                    Container(
-                      width: 100,
-                      height: 50,
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.transparent,
-                          backgroundColor: Colors.transparent, // Màu chữ
-                          shadowColor: Colors.transparent, // Tắt bóng
-                          side:
-                              BorderSide(color: Colors.transparent), // Tắt viền
-                        ),
-                        onPressed: () async {
-                          await qrController?.toggleFlash();
-                        },
-                        child: null,
-                      ),
-                    ),
-                  ],
-                ),
+                FGButtonsQrScan(
+                    onToggleFlash: toggleFlash), // Truyền hàm toggleFlash
                 Padding(
                   padding: const EdgeInsets.only(top: 40, bottom: 40.0),
                   child: Align(

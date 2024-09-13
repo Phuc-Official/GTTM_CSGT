@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 
+/// Xem thông tin quét được của CCCD
+
 class InfoScreen extends StatelessWidget {
   final String data;
   final String imagePath;

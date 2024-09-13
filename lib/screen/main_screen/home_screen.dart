@@ -87,8 +87,25 @@ class _HomeState extends State<Home> {
             _buildQRButton(
                 screenWidth, screenHeight), // Truyền screenWidth cho nút
             SizedBox(height: screenHeight * 0.02),
-            _buildNFCButton(
-                screenWidth, screenHeight), // Truyền screenWidth cho nút
+            _buildNFCButton(screenWidth, screenHeight),
+            SizedBox(height: screenHeight * 0.02),
+            _buildPlateNoButton(),
+            SizedBox(height: screenHeight * 0.02),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.085),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(flex: 9, child: _buildTrafficLawsButton()),
+                  Expanded(
+                      flex: 1,
+                      child: SizedBox(
+                        width: 1,
+                      )),
+                  Expanded(flex: 9, child: _buildNewsButton()),
+                ],
+              ),
+            )
           ],
         ),
       ),
@@ -254,7 +271,7 @@ class _HomeState extends State<Home> {
             context, MaterialPageRoute(builder: (context) => LawsScreen()));
       },
       child: Container(
-        width: 145,
+        width: 140,
         height: 70,
         padding: EdgeInsets.symmetric(vertical: 15, horizontal: 0),
         decoration: BoxDecoration(
@@ -290,7 +307,7 @@ class _HomeState extends State<Home> {
       //       context, MaterialPageRoute(builder: (context) => CameraPage()));
       // },
       child: Container(
-        width: 145,
+        width: 140,
         height: 70,
         padding: EdgeInsets.symmetric(vertical: 15, horizontal: 0),
         decoration: BoxDecoration(

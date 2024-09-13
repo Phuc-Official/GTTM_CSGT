@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../screen/lookup/sanction_detail.dart';
 import '../styles/app_colors.dart';
 
+/// Nhóm 4 nút trong màn hình Lookup
+
 class ButtonGrid extends StatelessWidget {
   final String plateNo; // Biển số xe
 

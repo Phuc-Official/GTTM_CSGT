@@ -1,5 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+/// Nút Gradient
 
 class GradientButton extends StatelessWidget {
   final Gradient gradient;
@@ -22,7 +23,8 @@ class GradientButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white, backgroundColor: Colors.transparent,
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),

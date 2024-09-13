@@ -5,6 +5,8 @@ import '../data/vehicle.dart';
 import '../data/vehicle_service.dart';
 import '../styles/app_colors.dart';
 
+/// Nhóm nút trượt ngang chứa hình xe và biển số
+
 class HorizontalScroll extends StatefulWidget {
   final String onVehicleSelected;
 
