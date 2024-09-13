@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../data/traffic_violation_laws.dart';
 import '../../elements/laws_button_list.dart';
+
+/// Màn hình luật giao thông
 
 class LawsScreen extends StatefulWidget {
   @override
@@ -14,7 +17,7 @@ class _LawsScreenState extends State<LawsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -33,16 +36,14 @@ class _LawsScreenState extends State<LawsScreen>
           tabs: [
             Tab(text: 'Xe máy'),
             Tab(text: 'Xe Ô tô'),
-            Tab(text: 'Khác'),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          LawsButtonList(),
-          Center(child: Text('Content for Tab 2')),
-          Center(child: Text('Content for Tab 3')),
+          LawsButtonList(buttons: motorcycleButtons, vehicleType: 'Xe máy'),
+          LawsButtonList(buttons: carButtons, vehicleType: 'Xe ô tô'),
         ],
       ),
     );
